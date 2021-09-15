@@ -96,3 +96,6 @@ print(returns_NULL())
 import frozentest
 
 print(frozentest.__file__)
+
+# run additional GC tests
+extra_coverage_gc()

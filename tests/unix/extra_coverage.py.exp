@@ -209,3 +209,4 @@ b'bytes 1234\x01'
 2
 3
 frozentest.py
+# end coverage.c gc test
