@@ -41,6 +41,8 @@ PY_EXTMOD_O_BASENAME = \
 	extmod/vfs_fat_diskio.o \
 	extmod/vfs_fat_file.o \
 	extmod/vfs_lfs.o \
+	extmod/vfs_map.o \
+	extmod/vfs_map_file.o \
 	extmod/utime_mphal.o \
 	extmod/uos_dupterm.o \
 	shared/libc/abort_.o \
