@@ -25,6 +25,7 @@ import serial.tools.list_ports
 
 from . import pyboardextended as pyboard
 from .console import Console, ConsolePosix
+from .mapfs import make_mapfs
 
 _PROG = "mpremote"
 
@@ -67,6 +68,7 @@ _COMMANDS = {
     "exec": (True, True, 1, "execute the string"),
     "run": (True, True, 1, "run the given local script"),
     "fs": (True, True, 1, "execute filesystem commands on the device"),
+    "deploy-mapfs": (True, True, 1, "deploy a directory to /mapfs on the device"),
     "help": (False, False, 0, "print help and exit"),
     "version": (False, False, 0, "print version and exit"),
 }
@@ -339,6 +341,40 @@ def do_filesystem(pyb, args):
     args.clear()
 
 
+def do_deploy_mapfs(pyb, args):
+    pyb.exec_("import uos; mapfs = uos.mount('/mapfs')")
+    if pyb.eval("mapfs") == b'None':
+        print(f"/mapfs does not exist on device")
+        sys.exit(1)
+    if pyb.eval("mapfs.device()") == b'None':
+        print(f"/mapfs does not have an associated device")
+        sys.exit(1)
+    pyb.exec_("dev=mapfs.device()")
+    block_count = int(str(pyb.eval("dev.ioctl(4,0)"), "ascii"))
+    block_size = int(str(pyb.eval("dev.ioctl(5,0)"), "ascii"))
+    print(f"/mapfs is a block device of size {block_count}*{block_size}={block_count * block_size} bytes")
+
+    mapfs = make_mapfs(args.pop(0), "/")
+    print(f"Image size is {len(mapfs)} bytes")
+
+    if len(mapfs) > block_count * block_size:
+        print(f"/mapfs is too small for image")
+        sys.exit(1)
+
+    pyb.exec_(f"buf=bytearray({block_size})")
+    for block in range(0, (len(mapfs) + block_size - 1) // block_size):
+        mapfs_block = mapfs[block * block_size : (block + 1) * block_size]
+        off = 0
+        while off < len(mapfs_block):
+            l = min(len(mapfs_block) - off, 256)
+            pyb.exec_(f"buf[{off}:{off+l}]=" + repr(mapfs_block[off:off+l]))
+            off += l
+        print(f"\rWriting block {block}", end="")
+        pyb.exec_(f"dev.writeblocks({block},buf)")
+
+    print()
+    print(f"Image deployed")
+
 def do_repl_main_loop(pyb, console_in, console_out_write, *, code_to_inject, file_to_inject):
     while True:
         console_in.waitchar(pyb.serial)
@@ -571,6 +607,8 @@ def main():
                     return ret
             elif cmd == "fs":
                 do_filesystem(pyb, args)
+            elif cmd == "deploy-mapfs":
+                do_deploy_mapfs(pyb, args)
             elif cmd == "repl":
                 do_repl(pyb, args)
 
