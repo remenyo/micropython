@@ -249,7 +249,7 @@ void mbedtls_debug_set_threshold(int threshold) {
     (void)threshold;
 }
 
-void *esp_native_code_commit(void *buf, size_t len, void *reloc) {
+void *esp_native_code_commit(const void *buf, size_t len, void *reloc) {
     len = (len + 3) & ~3;
     uint32_t *p = heap_caps_malloc(len, MALLOC_CAP_EXEC);
     if (p == NULL) {

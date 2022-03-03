@@ -119,6 +119,6 @@ mp_compiled_module_t mp_raw_code_load_file(const char *filename, mp_module_conte
 void mp_raw_code_save(mp_compiled_module_t *cm, mp_print_t *print);
 void mp_raw_code_save_file(mp_compiled_module_t *cm, const char *filename);
 
-void mp_native_relocate(void *reloc, uint8_t *text, uintptr_t reloc_text);
+void mp_native_relocate(void *reloc, const uint8_t *text, uintptr_t reloc_text);
 
 #endif // MICROPY_INCLUDED_PY_PERSISTENTCODE_H
