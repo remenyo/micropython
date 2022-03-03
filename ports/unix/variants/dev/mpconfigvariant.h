@@ -31,6 +31,7 @@
 #ifndef MICROPY_REPL_EMACS_WORDS_MOVE
 #define MICROPY_REPL_EMACS_WORDS_MOVE           (1)
 #endif
+#define MICROPY_VFS_MAP                         (1)
 #ifndef MICROPY_REPL_EMACS_EXTRA_WORDS_MOVE
 #define MICROPY_REPL_EMACS_EXTRA_WORDS_MOVE     (1)
 #endif
