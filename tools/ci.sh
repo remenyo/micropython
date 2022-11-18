@@ -398,6 +398,15 @@ CI_UNIX_OPTS_QEMU_ARM=(
     MICROPY_STANDALONE=1
 )
 
+CI_UNIX_OPTS_QEMU_SPARC=(
+    CROSS_COMPILE=sparc64-linux-gnu-
+    VARIANT=coverage
+    MICROPY_FORCE_32BIT=1
+    MICROPY_STANDALONE=1
+    MICROPY_PY_FFI=0
+    LDFLAGS_EXTRA="-Wl,-dynamic-linker,/usr/sparc64-linux-gnu/lib32/ld-linux.so.2"
+)
+
 function ci_unix_build_helper {
     make ${MAKEOPTS} -C mpy-cross
     make ${MAKEOPTS} -C ports/unix "$@" submodules
@@ -649,6 +658,26 @@ function ci_unix_qemu_arm_run_tests {
     export QEMU_LD_PREFIX=/usr/arm-linux-gnueabi
     file ./ports/unix/build-coverage/micropython
     (cd tests && MICROPY_MICROPYTHON=../ports/unix/build-coverage/micropython ./run-tests.py --exclude 'vfs_posix.*\.py')
+}
+
+function ci_unix_qemu_sparc_setup {
+    sudo apt-get update
+    sudo apt-get install gcc-multilib-sparc64-linux-gnu g++-multilib-sparc64-linux-gnu
+    sudo apt-get install qemu-user
+    qemu-sparc --version
+}
+
+function ci_unix_qemu_sparc_build {
+    ci_unix_build_helper "${CI_UNIX_OPTS_QEMU_SPARC[@]}"
+}
+
+function ci_unix_qemu_sparc_run_tests {
+    # Issues with SPARC tests:
+    # - (i)listdir does not work, it always returns the empty list (it's an issue with the underlying C call)
+    file ./ports/unix/build-coverage/micropython
+    export QEMU_LD_PREFIX=/usr/sparc64-linux-gnu
+    ./ports/unix/build-coverage/micropython -c "print(1)"
+    (cd tests && MICROPY_MICROPYTHON=../ports/unix/build-coverage/micropython ./run-tests.py --exclude 'vfs_posix.*\.py' --exclude 'ffi_(callback|float|float2).py')
 }
 
 ########################################################################################
