@@ -308,6 +308,12 @@ STATIC mp_obj_t mp_builtin_iter(mp_obj_t o_in)
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_iter_obj, mp_builtin_iter);
 
+STATIC mp_obj_t test_empty_function()
+{
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_0(test_empty_function_obj, test_empty_function);
+
 #if MICROPY_PY_BUILTINS_MIN_MAX
 
 STATIC mp_obj_t mp_builtin_min_max(size_t n_args, const mp_obj_t *args, mp_map_t *kwargs, mp_uint_t op)
@@ -746,6 +752,8 @@ MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_id_obj, mp_obj_id);
 MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_len_obj, mp_obj_len);
 
 STATIC const mp_rom_map_elem_t mp_module_builtins_globals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR_emptyfunc), MP_ROM_PTR(&test_empty_function_obj)},
+
     {MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_builtins)},
 
     // built-in core functions
