@@ -24,6 +24,7 @@
 ######################
 build/
 build-*/
+examples/embedding2/micropython_embed
 
 # Test failure outputs
 ######################

@@ -1,3 +1,21 @@
+## Steps to generate exportable Micropython runtime for benchmarking purposes:
+
+``` sh
+# Start in the root of the repo, then:
+cd mpy-cross
+make
+cd ../examples/embedding2
+make -f micropython_embed.mk
+```
+
+This will make a folder: ./examples/embedding2/micropython_embed
+
+You can copy it over your C/C++ project and use like it is used in the [embedding](examples/embedding/hello-embed.c) or [embedding2](examples/embedding2/main.c) examples.
+
+For more information, look in the readmes of the examples.
+
+---
+
 [![CI badge](https://github.com/micropython/micropython/workflows/unix%20port/badge.svg)](https://github.com/micropython/micropython/actions?query=branch%3Amaster+event%3Apush) [![codecov](https://codecov.io/gh/micropython/micropython/branch/master/graph/badge.svg?token=I92PfD05sD)](https://codecov.io/gh/micropython/micropython)
 
 The MicroPython project
